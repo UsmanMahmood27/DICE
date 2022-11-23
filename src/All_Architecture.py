@@ -502,31 +502,8 @@ class combinedModel(nn.Module):
             # print('min = ', x_graphattention.min().item())
             # print('max = ', x_graphattention.max().item())
             x_graphattention = (self.HW(x_graphattention.reshape(a, b)))
-            # if torch.min(x_graphattention) < 0:
-            #     print('less than zero')
-            # min = torch.min(x_graphattention,dim=1,keepdim=True).values
-            # max = torch.max(x_graphattention,dim=1,keepdim=True).values
-            # x_graphattention = (x_graphattention - min) / ((max - min) + 1e-5)
+            return (x * (x_graphattention.unsqueeze(-1))).mean(node_axis), 'FC2', x_graphattention
 
-
-            # x_graphattention = (torch.softmax(x_graphattention,dim=1))
-
-            # v, indexes = torch.kthvalue(x_graphattention, 124, dim=1)
-            # v = v.unsqueeze(1).repeat(1, self.time_points)
-            # zeros = torch.zeros(v.size()).to(self.device_one)
-            #
-            # x_graphattention_new = torch.where((x_graphattention > v), x_graphattention, zeros)
-
-            # print('min = ', x_graphattention.min().item())
-            # print('max = ', x_graphattention.max().item())
-
-            # x_graphattention = (x_graphattention - torch.min(x_graphattention,dim=1,keepdim=True).values) / (torch.max(x_graphattention,dim=1,keepdim=True).values - torch.min(x_graphattention,dim=1,keepdim=True).values)
-            # x_graphattention = x_graphattention * 2
-            # x_graphattention = x_graphattention - 1
-            # x = self.gta_norm_x(x)
-            # permute_idx = list(range(node_axis)) + [len(x_graphattention.shape) - 1] + list(
-            #     range(node_axis, len(x_graphattention.shape) - 1))
-            # x_graphattention = x_graphattention.permute(permute_idx)
 
 
 

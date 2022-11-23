@@ -16,7 +16,6 @@ import datetime
 from src.lstm_attn import subjLSTM
 from src.All_Architecture import combinedModel
 
-from kmeans_pytorch import kmeans
 # import torchvision.models.resnet_conv1D as models
 # from tensorboardX import SummaryWriter
 
@@ -140,6 +139,7 @@ def train_encoder(args):
         # device = torch.device("cuda:" + str(args.cuda_id))
     else:
         device = torch.device("cpu")
+        device2 = device
     print('device = ', device)
     print('device = ', device2)
 
@@ -619,7 +619,7 @@ def train_encoder(args):
     # LR_acc = np_results[:, 5]
     # print(np.mean(LR_acc[:]))
 
-    np_adjacency_matrices = adjacency_matrices_learned.numpy()
+    # np_adjacency_matrices = adjacency_matrices_learned.numpy()
 
     # print('fiinal shape ',temporal_adjacency_matrices_learned.shape)
     # np_temporal_adjacency_matrices = temporal_adjacency_matrices_learned.numpy()

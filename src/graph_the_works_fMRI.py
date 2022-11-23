@@ -523,11 +523,11 @@ class the_works_trainer(Trainer):
         #         sym -= torch.eye(param_flat.shape[0],device=self.device)
         #         orth_loss = orth_loss + (reg * sym.abs().sum())
 
-        for name, param in self.model.sero_embed.named_parameters():
+        for name, param in self.model.gta_embed.named_parameters():
             if 'bias' not in name:
                 lstm_loss += (reg * torch.norm(param,p=1))
 
-        for name, param in self.model.sero_attend.named_parameters():
+        for name, param in self.model.gta_attend.named_parameters():
             if 'bias' not in name:
                 lstm_loss += (reg * torch.norm(param,p=1))
 

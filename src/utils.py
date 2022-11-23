@@ -48,13 +48,13 @@ def get_argparser():
                         help='Task Array ID')
     parser.add_argument('--cv-Set', type=int, default=1,
                         help='Number of CV sets')
-    parser.add_argument('--start-CV', type=int, default=0,
+    parser.add_argument('--start-CV', type=int, default=1,
                         help='CV index to start from')
     parser.add_argument('--teststart-ID', type=int, default=1,
                         help='Task Set Start Index ID')
     parser.add_argument('--job-ID', type=int, default=1,
                         help='Job Array ID')
-    parser.add_argument('--ntrials', type=int, default=10,
+    parser.add_argument('--ntrials', type=int, default=1,
                         help='Number of Trials')
     parser.add_argument('--sample-number', type=int, default=0,
                         help='Job Array ID')
