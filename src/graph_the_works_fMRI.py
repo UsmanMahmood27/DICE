@@ -329,58 +329,15 @@ class the_works_trainer(Trainer):
             targets = targets.to(self.device)
             # logits, FC, _, FC_sum, attention_time,attention_weights, means_logits,selected_indices,ENC_from_means = self.model(sx, targets, mode, self.device, epoch)
 
-            if mode == 'glacier':
-                sx, targets_a, targets_b, targets, lam = self.mixup_data(sx, targets, 1, self.device)
 
             logits, kl_loss, FC, FC_temporal = self.model(sx, targets, mode, self.device, epoch)
 
 
 
-            for i in range(FC.shape[0]):
-                temp = torch.sigmoid(FC[i,:,:])
-                t = torch.trace(temp)
-                nt = torch.sum(temp)
-
-                nt = nt-t
-
-                t = t / FC.shape[1]
-                nt = nt / ((FC.shape[1] * FC.shape[1]) - FC.shape[1])
-                diag+=t
-                ndiag+=nt
+            loss = F.cross_entropy(logits, targets)
 
 
 
-            # targets = targets.float()
-
-            if mode == 'glacier':
-                loss = (lam * F.cross_entropy(logits, targets_a) + (1 - lam) * F.cross_entropy(logits, targets_b))
-
-            else:
-                loss = F.cross_entropy(logits, targets)
-            # loss = self.criterion2(logits.reshape(-1),targets.float())
-            loss2 = 0.9526-(diag / FC.shape[0])#0.645
-            # loss2 = ndiag/diag
-            # loss3 = 0.5-(ndiag / FC.shape[0])
-            loss = (loss +  (1 * loss2) )
-
-
-            # smforsme = torch.softmax(logits,dim=1)
-            # labelsformse = smforsme[:,1]
-            # loss2 = torch.sum(torch.abs(smforsme[:,0]-smforsme[:,1])) * -1
-            # loss = self.loss_criteria(torch.squeeze(logits),torch.squeeze(targets))
-            # loss =  loss + self.TripletLoss(FC,targets)
-            # loss2 = F.cross_entropy(means_logits, selected_indices)
-            # loss_mse = F.mse_loss(labelsformse,targets.float())
-            # selected_indices = selected_indices.reshape(targets.shape[0],-1)
-            # targets = targets.float()
-            # loss = F.binary_cross_entropy_with_logits(logits, torch.unsqueeze(targets,dim=1))
-            # print(predictions.shape)
-            # print(sx.shape)
-            # loss_pred = self.get_prediction_loss(predictions,torch.squeeze(sx)[:,:,1:])
-            # loss_pred = F.mse_loss(predictions,torch.squeeze(sx)[:,:,1:])
-            # print("loss time", time.time() - t)
-            # regularization
-            # t=time.time()
 
             # loss =  loss + loss_mse + loss2
             if mode == 'train' or mode == 'eval':
@@ -542,7 +499,7 @@ class the_works_trainer(Trainer):
 
 
     def add_regularization(self, loss, ortho_loss=0.0):
-        reg = 1e-8
+        reg = 1e-6
         E_loss = 0.
         lstm_loss = torch.zeros(1).to(self.device)
         orth_loss = torch.zeros(1).to(self.device)
@@ -785,7 +742,7 @@ class the_works_trainer(Trainer):
         # print(self.test_labels.shape[0])
         # return
         # scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer, patience=5,factor=0.25,cooldown=0,verbose=True )
-        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer, patience=7,factor=0.1,cooldown=0,verbose=True )
+        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer, patience=4,factor=0.5,cooldown=0,verbose=True )
         #
         # scheduler = torch.optim.lr_scheduler.ExponentialLR(self.optimizer, gamma=0.99)
 
