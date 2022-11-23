@@ -15,17 +15,11 @@ import pandas as pd
 import datetime
 from src.lstm_attn import subjLSTM
 from src.All_Architecture import combinedModel
-from src.graph_convnet import Graph_init
-from src.graph_convnet import Graph_ConvNet_LeNet5
+
 from kmeans_pytorch import kmeans
 # import torchvision.models.resnet_conv1D as models
 # from tensorboardX import SummaryWriter
-from torch_geometric.data import InMemoryDataset
-from tqdm import tqdm
-from torch.utils.data import TensorDataset
-from src.pyg_class import pyg_data_creation, Net
-from torch_geometric.data import DataLoader
-from src.graph_train import graph_trainer
+
 from src.graph_the_works_fMRI import the_works_trainer
 import matplotlib.pyplot as plt
 import nibabel as nib
@@ -33,10 +27,7 @@ import h5py
 import math
 from copy import  copy
 import matplotlib.colors as colors
-import seaborn as sns
-from nilearn import datasets
-from nilearn import plotting, image
-from polyssifier import poly
+
 import torch.nn.utils.rnn as tn
 
 
