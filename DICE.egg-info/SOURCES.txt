@@ -1,0 +1,9 @@
+LICENSE
+README.md
+setup.py
+DICE/__init__.py
+DICE.egg-info/PKG-INFO
+DICE.egg-info/SOURCES.txt
+DICE.egg-info/dependency_links.txt
+DICE.egg-info/requires.txt
+DICE.egg-info/top_level.txt
