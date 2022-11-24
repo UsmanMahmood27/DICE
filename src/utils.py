@@ -48,7 +48,7 @@ def get_argparser():
                         help='Task Array ID')
     parser.add_argument('--cv-Set', type=int, default=1,
                         help='Number of CV sets')
-    parser.add_argument('--start-CV', type=int, default=1,
+    parser.add_argument('--start-CV', type=int, default=0,
                         help='CV index to start from')
     parser.add_argument('--teststart-ID', type=int, default=1,
                         help='Task Set Start Index ID')
