@@ -54,7 +54,7 @@ def get_argparser():
                         help='Task Set Start Index ID')
     parser.add_argument('--job-ID', type=int, default=1,
                         help='Job Array ID')
-    parser.add_argument('--ntrials', type=int, default=1,
+    parser.add_argument('--ntrials', type=int, default=10,
                         help='Number of Trials')
     parser.add_argument('--sample-number', type=int, default=0,
                         help='Job Array ID')

@@ -10,10 +10,10 @@ from torch.utils.data import RandomSampler, BatchSampler, SequentialSampler
 from .utils import calculate_accuracy, Cutout, calculate_accuracy_by_labels, calculate_FP, calculate_FP_Max
 from .newtrainer import Trainer
 from src.utils import EarlyStopping, EarlyStoppingACC, EarlyStoppingACC_and_Loss
-from torchvision import transforms
+# from torchvision import transforms
 import matplotlib.pylab as plt
 import matplotlib.pyplot as pl
-import torchvision.transforms.functional as TF
+# import torchvision.transforms.functional as TF
 import torch.nn.utils.rnn as tn
 from torch.autograd import Variable
 from sklearn.metrics import accuracy_score
@@ -113,7 +113,7 @@ class the_works_trainer(Trainer):
         self.early_stopper = EarlyStopping("self.model_backup",  patience=self.patience, verbose=False,
                                            wandb="self.wandb", name="model",
                                            path=self.path, trial=self.trials)
-        self.transform = transforms.Compose([Cutout(n_holes=1, length=80)])
+        # self.transform = transforms.Compose([Cutout(n_holes=1, length=80)])
         # self.scheduler = torch.optim.lr_scheduler.OneCycleLR(self.optimizer, max_lr=0.001, epochs=80,
         #                                                 steps_per_epoch=5, pct_start=0.2,
         #                                                 div_factor=0.001 / config['lr'], final_div_factor=10000,verbose=True)
@@ -508,20 +508,6 @@ class the_works_trainer(Trainer):
         CE_loss = loss
         encoder_loss=torch.zeros(1).to(self.device)
 
-        # ortho_loss = reg * ortho_loss
-
-        # for name, param in self.model.garo_key_components.named_parameters():
-        #     if 'bias' not in name:
-        #         param_flat = param.view(param.shape[0], -1)
-        #         sym = torch.mm(param_flat, torch.t(param_flat))
-        #         sym -= torch.eye(param_flat.shape[0],device=self.device)
-        #         orth_loss = orth_loss + (reg * sym.abs().sum())
-        # for name, param in self.model.garo_query_components.named_parameters():
-        #     if 'bias' not in name:
-        #         param_flat = param.view(param.shape[0], -1)
-        #         sym = torch.mm(param_flat, torch.t(param_flat))
-        #         sym -= torch.eye(param_flat.shape[0],device=self.device)
-        #         orth_loss = orth_loss + (reg * sym.abs().sum())
 
         for name, param in self.model.gta_embed.named_parameters():
             if 'bias' not in name:
@@ -535,105 +521,6 @@ class the_works_trainer(Trainer):
         #     if 'bias' not in name:
         #         encoder_loss += (reg * torch.norm(param,p=1))
 
-        # for name, param in self.model.up_sample.named_parameters():
-        #     if 'bias' not in name:
-        #         lstm_loss += (reg * torch.norm(param,p=1))
-
-        # for name, param in self.model.embedder.named_parameters():
-        #     if 'bias' not in name:
-        #         encoder_loss += (reg * torch.norm(param,p=1))
-
-        # for name, param in self.model.transformer_encoder.named_parameters():
-        #     if 'bias' not in name:
-        #         encoder_loss += (reg * torch.norm(param,p=1))
-
-
-
-        # for name, param in self.model.encoder.named_parameters():
-        #     if 'bias' not in name:
-        #         encoder_loss += (reg * torch.sum(torch.abs(param)))
-
-        # for name, param in self.model.lstm.named_parameters():
-        #     if 'bias' not in name:
-        #         lstm_loss += (reg * torch.sum(torch.abs(param)))
-        #
-        # for name, param in self.model.lstm_decoder2.named_parameters():
-        #     if 'bias' not in name:
-        #         lstm_loss += (reg * torch.sum(torch.abs(param)))
-        #
-        # for name, param in self.model.lstm_decoder3.named_parameters():
-        #     if 'bias' not in name:
-        #         lstm_loss += (reg * torch.sum(torch.abs(param)))
-
-
-        # for name, param in self.model.lstm_decoder_time.named_parameters():
-        #     if 'bias' not in name:
-        #         lstm_loss += (reg * torch.sum(torch.abs(param)))
-
-
-        # for name, param in self.model.decoder.named_parameters():
-        #     if 'bias' not in name:
-        #         lstm_loss += (reg * torch.sum(torch.abs(param)))
-        # for name, param in self.model.attn_time.named_parameters():
-        #     if 'bias' not in name:
-        #         lstm_loss += (reg * torch.sum(torch.abs(param)))
-        # for name, param in self.model.mlp.named_parameters():
-        #     if 'bias' not in name:
-        #         lstm_loss += (reg * torch.norm(param,p=1))
-
-        # for name, param in self.model.mlp_before_lstm.named_parameters():
-        #     if 'bias' not in name:
-        #         lstm_loss += (reg * torch.sum(torch.abs(param)))
-
-        # for name, param in self.model.attn_region.named_parameters():
-        #     if 'bias' not in name:
-        #         lstm_loss += (reg * torch.sum(torch.abs(param)))
-        #
-        # for name, param in self.model.attn_spatial.named_parameters():
-        #     if 'bias' not in name:
-        #         lstm_loss += (reg * torch.sum(torch.abs(param)))
-
-        # for name, param in self.model.attn_weight.named_parameters():
-        #     if 'bias' not in name:
-        #         lstm_loss += (reg * torch.sum(torch.abs(param)))
-
-        # for name, param in self.model.key_layer_temporal.named_parameters():
-        #     if 'bias' not in name:
-        #         lstm_loss += (reg * torch.sum(torch.abs(param)))
-        #
-        # for name, param in self.model.value_layer_temporal.named_parameters():
-        #     if 'bias' not in name:
-        #         lstm_loss += (reg * torch.sum(torch.abs(param)))
-        #
-        # for name, param in self.model.query_layer_temporal.named_parameters():
-        #     if 'bias' not in name:
-        #         lstm_loss += (reg * torch.sum(torch.abs(param)))
-        #
-        # for name, param in self.model.multihead_attn_temporal.named_parameters():
-        #     if 'bias' not in name:
-        #         lstm_loss += (reg * torch.norm(param,p=1))
-        # for name, param in self.model.garo_key.named_parameters():
-        #     if 'bias' not in name:
-        #         lstm_loss += (reg * torch.sum(torch.abs(param)))
-        # for name, param in self.model.garo_query.named_parameters():
-        #     if 'bias' not in name:
-        #         lstm_loss += (reg * torch.sum(torch.abs(param)))
-
-        # for name, param in self.model.key_layer2.named_parameters():
-        #     if 'bias' not in name:
-        #         lstm_loss += (reg * torch.sum(torch.abs(param)))
-        #
-        # for name, param in self.model.value_layer2.named_parameters():
-        #     if 'bias' not in name:
-        #         lstm_loss += (reg * torch.sum(torch.abs(param)))
-        #
-        # for name, param in self.model.query_layer2.named_parameters():
-        #     if 'bias' not in name:
-        #         lstm_loss += (reg * torch.sum(torch.abs(param)))
-        #
-        # for name, param in self.model.multihead_attn2.named_parameters():
-        #     if 'bias' not in name:
-        #         lstm_loss += (reg * torch.sum(torch.abs(param)))
 
 
         loss = loss +  lstm_loss.to(self.device) #+ encoder_loss
