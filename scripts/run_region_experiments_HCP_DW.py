@@ -15,29 +15,14 @@ import pandas as pd
 import datetime
 from src.lstm_attn import subjLSTM
 from src.All_Architecture import combinedModel
-from src.graph_convnet import Graph_init
-from src.graph_convnet import Graph_ConvNet_LeNet5
-from kmeans_pytorch import kmeans
+
 # import torchvision.models.resnet_conv1D as models
 # from tensorboardX import SummaryWriter
-from torch_geometric.data import InMemoryDataset
-from tqdm import tqdm
-from torch.utils.data import TensorDataset
+
 # from src.pyg_class import pyg_data_creation, Net, Net2
-from torch_geometric.data import DataLoader
-from src.graph_train import graph_trainer
+
 from src.graph_the_works_fMRI import the_works_trainer
-import matplotlib.pyplot as plt
-import nibabel as nib
-import h5py
-import math
-from copy import  copy
-import matplotlib.colors as colors
-import seaborn as sns
-from nilearn import datasets
-from nilearn import plotting, image
-from polyssifier import poly
-import torch.nn.utils.rnn as tn
+
 
 
 def find_indices_of_each_class(all_labels):
@@ -48,72 +33,6 @@ def find_indices_of_each_class(all_labels):
 
 
 def train_encoder(args):
-    # start_path = '/data/qneuromark/Results/ICA/ABCD/'
-    #
-    # filename = '../DataandLabels/ABCD_genders_subject_and_session_matched.csv'
-    # df = pd.read_csv(filename, header=None, dtype=str)
-    # subjects_info = df.values
-    # directories = subjects_info[:, 1]
-    # lengths = []
-    # labels = subjects_info[:,2]
-    # #
-    # f_indices = labels == 'F'
-    # m_indices = labels == 'M'
-    # labels[f_indices] = 1
-    # labels[m_indices] = 0
-    # labels = labels.reshape(-1).astype(int)
-    # #
-    # # np.savetxt('../DataandLabels/labels_ABCD_baseline_gender.csv', labels, delimiter=",")
-    # # return
-    # max_tp = 0
-    # min_tp = 10000
-    # count = 0
-    # index = 0
-    # labels_index = 0
-    # final_labels = np.zeros((10976))
-    # names_370 = []
-    # data = np.zeros((10976,100,370))
-    # bb =0
-    # for dir in directories:
-    #
-    #     file = start_path + dir + '/ABCD_sub01_timecourses_ica_s1_.nii'
-    #     file = start_path + dir + '/ABCD_ica_br1.mat'
-    #     print(file)
-    #     # am = nib.load(file)
-    #     # am = am.get_fdata()
-    #     # am = np.transpose(am[:, :])#.transpose()
-    #     # am_zscored = am#stats.zscore(am, axis=1)
-    #
-    #     am = h5py.File(file, 'r')
-    #     am = am.get('compSet/tc')
-    #     am = np.array(am)
-    #     am_zscored = np.transpose(am)
-    #
-    #     tp = am_zscored.shape[1]
-    #     if tp >= 370:
-    #         data[index,:,:] = am_zscored[:,:370]
-    #         final_labels[index] = labels[labels_index]
-    #         names_370.append(dir)
-    #         # print(labels[labels_index])
-    #         # labels_index_list.append(labels_index)
-    #         index = index + 1
-    #     labels_index = labels_index + 1
-    #
-    # # print('max time point = ', max_tp)
-    # # print('min time point = ', min_tp)
-    # # print('count = ', count)
-    # # labels_index = np.stack(labels_index).reshape(-1)
-    # names_370 = np.stack(names_370).reshape(-1)
-    # df = pd.DataFrame(names_370)
-    # df.to_csv('../DataandLabels/names370.csv',header=False,index=False)
-    # np.savetxt('../DataandLabels/labels_ABCD_tp370.csv', final_labels, delimiter=",")
-    #
-    #
-    #
-    # with open('../DataandLabels/ABCD_tp370_br_not_zscored.npz', 'wb') as filesim:
-    #     np.save(filesim, data)
-    #
-    # return
 
 
 
@@ -456,10 +375,10 @@ def train_encoder(args):
     # trainer.start_train(train_loader,val_loader,test_loader,args.epochs)
     #
 
-    number_of_cv_sets = args.cv_Set
+    number_of_test_folds_to_run = args.n_test_folds_to_run
 
     output_text_file = open(output_path, "a+")
-    output_text_file.write("number of CV set = %d nTrial = %d\r\n" % (number_of_cv_sets, ntrials))
+    output_text_file.write("number of CV set = %d nTrial = %d\r\n" % (number_of_test_folds_to_run, ntrials))
     output_text_file.close()
 
 
@@ -470,28 +389,28 @@ def train_encoder(args):
     print(SZ_index.shape)
     # return
     total_test_size = ntest_samples_perclass_HC + ntest_samples_perclass_SZ
-    results = torch.zeros(ntrials * number_of_cv_sets, 6)
-    # adjacency_matrices_FNC = torch.zeros(ntrials * number_of_cv_sets, total_test_size, n_regions_output,
+    results = torch.zeros(ntrials * number_of_test_folds_to_run, 6)
+    # adjacency_matrices_FNC = torch.zeros(ntrials * number_of_test_folds_to_run, total_test_size, n_regions_output,
     #                                          n_regions_output)
-    adjacency_matrices_learned = torch.zeros(ntrials * number_of_cv_sets, total_test_size, n_regions_output,
+    adjacency_matrices_learned = torch.zeros(ntrials * number_of_test_folds_to_run, total_test_size, n_regions_output,
                                              n_regions_output)
-    # LR_top_adjacency_matrices_learned = torch.zeros(ntrials * number_of_cv_sets, total_test_size, n_regions_output, n_regions_output)
-    # LR_bottom_adjacency_matrices_learned = torch.zeros(ntrials * number_of_cv_sets, total_test_size, n_regions_output, n_regions_output)
+    # LR_top_adjacency_matrices_learned = torch.zeros(ntrials * number_of_test_folds_to_run, total_test_size, n_regions_output, n_regions_output)
+    # LR_bottom_adjacency_matrices_learned = torch.zeros(ntrials * number_of_test_folds_to_run, total_test_size, n_regions_output, n_regions_output)
     #
-    adjacency_matrices_learned_sum = torch.zeros(ntrials * number_of_cv_sets, total_test_size, n_regions_output,
+    adjacency_matrices_learned_sum = torch.zeros(ntrials * number_of_test_folds_to_run, total_test_size, n_regions_output,
                                                  n_regions_output)
-    # attention_region = torch.zeros(ntrials * number_of_cv_sets, total_test_size, n_regions_output,
+    # attention_region = torch.zeros(ntrials * number_of_test_folds_to_run, total_test_size, n_regions_output,
     #                                              tc_after_encoder)
-    attention_time = torch.zeros(ntrials * number_of_cv_sets, total_test_size, tc_after_encoder)
-    result_targets = torch.zeros(ntrials * number_of_cv_sets, total_test_size)
-    # attention_components = torch.zeros(ntrials * number_of_cv_sets, total_test_size, n_regions_output)
+    attention_time = torch.zeros(ntrials * number_of_test_folds_to_run, total_test_size, tc_after_encoder)
+    result_targets = torch.zeros(ntrials * number_of_test_folds_to_run, total_test_size)
+    # attention_components = torch.zeros(ntrials * number_of_test_folds_to_run, total_test_size, n_regions_output)
 
-    # attention_time_embedding = torch.zeros(ntrials * number_of_cv_sets, ntest_samples_perclass * 2, tc_after_encoder)
-    # test_targets = torch.zeros(ntrials * number_of_cv_sets, ntest_samples_perclass * 2)
-    # test_pred = torch.zeros(ntrials * number_of_cv_sets, ntest_samples_perclass * 2)
-    # regions_selected = torch.zeros(ntrials * number_of_cv_sets, ntest_samples_perclass * 2 * 13) # 23 is the number of regions left after last pooling layer
+    # attention_time_embedding = torch.zeros(ntrials * number_of_test_folds_to_run, ntest_samples_perclass * 2, tc_after_encoder)
+    # test_targets = torch.zeros(ntrials * number_of_test_folds_to_run, ntest_samples_perclass * 2)
+    # test_pred = torch.zeros(ntrials * number_of_test_folds_to_run, ntest_samples_perclass * 2)
+    # regions_selected = torch.zeros(ntrials * number_of_test_folds_to_run, ntest_samples_perclass * 2 * 13) # 23 is the number of regions left after last pooling layer
     result_counter = 0
-    for test_ID in range(number_of_cv_sets):
+    for test_ID in range(number_of_test_folds_to_run):
         # test_ID = 1
         # index_array = torch.randperm(311)
         # finalData2 = finalData2[index_array, :, :, :]
@@ -499,7 +418,7 @@ def train_encoder(args):
         # if test_ID == 0:
         #     test_ID = test_ID + 0
         # else:
-        test_ID = test_ID  + args.start_CV
+        test_ID = test_ID  + args.starting_test_fold
         print('test Id =', test_ID)
 
         test_start_index_SZ = test_indices_SZ[test_ID]
@@ -529,7 +448,7 @@ def train_encoder(args):
             # for g_trial in range (ngtrials):
                 g_trial=1
                 output_text_file = open(output_path, "a+")
-                output_text_file.write("CV = %d Trial = %d\r\n" % (test_ID,trial))
+                output_text_file.write("Test fold number = %d Trial = %d\r\n" % (test_ID,trial))
                 output_text_file.close()
                 # Get subject_per_class number of random values
                 HC_random = torch.randperm(total_HC_index_tr.shape[0])

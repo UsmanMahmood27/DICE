@@ -46,10 +46,10 @@ def get_argparser():
                         help='Temperature for division of norms in pre training')
     parser.add_argument('--script-ID', type=int, default=1,
                         help='Task Array ID')
-    parser.add_argument('--cv-Set', type=int, default=1,
-                        help='Number of CV sets')
-    parser.add_argument('--start-CV', type=int, default=0,
-                        help='CV index to start from')
+    parser.add_argument('--n-test-folds-to-run', type=int, default=1,
+                        help='Number of test folds to run, total number of folds are defined in run file ')
+    parser.add_argument('--starting-test-fold', type=int, default=0,
+                        help='test fold index to start from')
     parser.add_argument('--teststart-ID', type=int, default=1,
                         help='Task Set Start Index ID')
     parser.add_argument('--job-ID', type=int, default=1,

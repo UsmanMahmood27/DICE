@@ -61,9 +61,9 @@ def train_encoder(args):
     sID = str(ID)
     currentDT = datetime.datetime.now()
     d1 = currentDT.strftime("%Y-%m-%d%H:%M:%S")
-    d2 = '_' + str(JobID) + '_ startFold_' + str(args.start_CV) + '_' + str(args.cv_Set)
+    d2 = '_' + str(JobID) + '_ startFold_' + str(args.starting_test_fold) + '_' + str(args.n_test_folds_to_run)
 
-    Name = args.exp + '_FBIRN_' + args.pre_training + 'Glacier_HardSigmoid'
+    Name = args.exp + '_FBIRN_' + args.pre_training + 'DICE_Default'
     dir = 'run-' + d1 + d2 + Name
     dir = dir + '-' + str(ID)
     wdb = 'wandb_new'
@@ -314,7 +314,7 @@ def train_encoder(args):
 
 
 
-    number_of_cv_sets = args.cv_Set
+    number_of_test_folds_to_run = args.n_test_folds_to_run
     n_regions_output = n_regions
     tc_after_encoder = 155
     HC_index, SZ_index = find_indices_of_each_class(all_labels)
@@ -322,38 +322,38 @@ def train_encoder(args):
     print(SZ_index.shape)
     # return
     total_test_size = ntest_samples_perclass_HC + ntest_samples_perclass_SZ
-    results = torch.zeros(ntrials * number_of_cv_sets, 10)
-    # adjacency_matrices_FNC = torch.zeros(ntrials * number_of_cv_sets, total_test_size, n_regions_output,
+    results = torch.zeros(ntrials * number_of_test_folds_to_run, 10)
+    # adjacency_matrices_FNC = torch.zeros(ntrials * number_of_test_folds_to_run, total_test_size, n_regions_output,
     #                                          n_regions_output)
-    # adjacency_matrices_learned = torch.zeros(ntrials * number_of_cv_sets, total_test_size, n_regions_output,
+    # adjacency_matrices_learned = torch.zeros(ntrials * number_of_test_folds_to_run, total_test_size, n_regions_output,
     #                                          n_regions_output)
 
-    # temporal_adjacency_matrices_learned = torch.zeros(ntrials * number_of_cv_sets, total_test_size, n_regions_output, tc_after_encoder,
+    # temporal_adjacency_matrices_learned = torch.zeros(ntrials * number_of_test_folds_to_run, total_test_size, n_regions_output, tc_after_encoder,
     #                                          tc_after_encoder)
-    # LR_top_adjacency_matrices_learned = torch.zeros(ntrials * number_of_cv_sets, total_test_size, n_regions_output, n_regions_output)
-    # LR_bottom_adjacency_matrices_learned = torch.zeros(ntrials * number_of_cv_sets, total_test_size, n_regions_output, n_regions_output)
+    # LR_top_adjacency_matrices_learned = torch.zeros(ntrials * number_of_test_folds_to_run, total_test_size, n_regions_output, n_regions_output)
+    # LR_bottom_adjacency_matrices_learned = torch.zeros(ntrials * number_of_test_folds_to_run, total_test_size, n_regions_output, n_regions_output)
     #
-    # adjacency_matrices_learned_sum = torch.zeros(ntrials * number_of_cv_sets, total_test_size, n_regions_output,
+    # adjacency_matrices_learned_sum = torch.zeros(ntrials * number_of_test_folds_to_run, total_test_size, n_regions_output,
     #                                              n_regions_output)
-    # attention_region = torch.zeros(ntrials * number_of_cv_sets, total_test_size, n_regions_output,
+    # attention_region = torch.zeros(ntrials * number_of_test_folds_to_run, total_test_size, n_regions_output,
     #                                              tc_after_encoder)
-    # attention_time = torch.zeros(ntrials * number_of_cv_sets, total_test_size, tc_after_encoder)
-    # attention_weights = torch.zeros(ntrials * number_of_cv_sets, total_test_size, tc_after_encoder,n_regions*n_regions)
-    # means_labels = torch.zeros(ntrials * number_of_cv_sets, total_test_size, tc_after_encoder)
+    # attention_time = torch.zeros(ntrials * number_of_test_folds_to_run, total_test_size, tc_after_encoder)
+    # attention_weights = torch.zeros(ntrials * number_of_test_folds_to_run, total_test_size, tc_after_encoder,n_regions*n_regions)
+    # means_labels = torch.zeros(ntrials * number_of_test_folds_to_run, total_test_size, tc_after_encoder)
 
-    # attention_components = torch.zeros(ntrials * number_of_cv_sets, total_test_size, n_regions_output)
+    # attention_components = torch.zeros(ntrials * number_of_test_folds_to_run, total_test_size, n_regions_output)
 
-    # attention_time_embedding = torch.zeros(ntrials * number_of_cv_sets, ntest_samples_perclass * 2, tc_after_encoder)
-    # test_targets = torch.zeros(ntrials * number_of_cv_sets, total_test_size)
-    # test_pred = torch.zeros(ntrials * number_of_cv_sets, ntest_samples_perclass * 2)
-    # regions_selected = torch.zeros(ntrials * number_of_cv_sets, total_test_size * 13) # 23 is the number of regions left after last pooling layer
+    # attention_time_embedding = torch.zeros(ntrials * number_of_test_folds_to_run, ntest_samples_perclass * 2, tc_after_encoder)
+    # test_targets = torch.zeros(ntrials * number_of_test_folds_to_run, total_test_size)
+    # test_pred = torch.zeros(ntrials * number_of_test_folds_to_run, ntest_samples_perclass * 2)
+    # regions_selected = torch.zeros(ntrials * number_of_test_folds_to_run, total_test_size * 13) # 23 is the number of regions left after last pooling layer
     result_counter = 0
-    for test_ID in range(number_of_cv_sets):
+    for test_ID in range(number_of_test_folds_to_run):
         # test_ID = 1
         # index_array = torch.randperm(311)
         # finalData2 = finalData2[index_array, :, :, :]
         # all_labels = all_labels[index_array]
-        test_ID = test_ID + args.start_CV
+        test_ID = test_ID + args.starting_test_fold
         if test_ID == 17:
             ntest_samples_perclass_SZ = 7
             ntest_samples_perclass_HC = 14#15#14
@@ -390,7 +390,7 @@ def train_encoder(args):
             # for g_trial in range (ngtrials):
                 g_trial=1
                 output_text_file = open(output_path, "a+")
-                output_text_file.write("CV = %d Trial = %d\r\n" % (test_ID,trial))
+                output_text_file.write("Test fold number = %d Trial = %d\r\n" % (test_ID,trial))
                 output_text_file.close()
                 # Get subject_per_class number of random values
                 HC_random = torch.randperm(total_HC_index_tr.shape[0])

@@ -800,7 +800,7 @@ class the_works_trainer(Trainer):
     def log_results(self, epoch_idx, epoch_loss2, epoch_loss3, epoch_loss, epoch_test_accuracy, epoch_accuracy2, epoch_roc,
                     epoch_roc2, prec, recall, prefix=""):
         print(
-            "{} CV: {}, Trial: {}, Epoch: {}, Loss: {}, Accuracy: {}, roc: {}, prec: {}, recall:{}".format(
+            "{} Test fold: {}, Trial: {}, Epoch: {}, Loss: {}, Accuracy: {}, roc: {}, prec: {}, recall:{}".format(
                 prefix.capitalize(),
                 self.cv,
                 self.trials,
